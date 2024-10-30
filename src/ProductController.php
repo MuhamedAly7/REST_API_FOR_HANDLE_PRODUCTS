@@ -21,13 +21,23 @@ class ProductController
 
     private function processResourceRequest(string $method, string $id) : void
     {
+        $product = $this->Gateway->get($id);
+        
+        if(!$product) {
+            http_response_code(404);
+            echo json_encode([
+                "message" => "Product Not Found"
+            ]);
+            return;
+        }
+
         switch ($method)
         {
             case "GET":
-
+                echo json_encode($product);
                 break;
             case "PATCH":
-
+                
                 break;
             case "DELETE":
 
@@ -64,7 +74,8 @@ class ProductController
                 ]);
                 break;
             default:
-
+                http_response_code(405);
+                header("Allow: GET, POST");
                 break;
         }
     }

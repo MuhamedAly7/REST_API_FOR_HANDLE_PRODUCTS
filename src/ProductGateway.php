@@ -31,4 +31,19 @@ class ProductGateway
         $stat->execute();
         return self::$connection->lastInsertId();
     }
+
+    public function get(string $id) : array|false
+    {
+        $sql = "SELECT * FROM product WHERE id = :id";
+        $stat = self::$connection->prepare($sql);
+        $stat->bindValue(":id", $id, PDO::PARAM_INT);
+        $stat->execute();
+        $data = $stat->fetch(PDO::FETCH_ASSOC);
+        if($data !== false) {
+            $data['is_available'] = (bool) $data['is_available'];
+        }
+        return $data;
+    }
+
+    
 }
