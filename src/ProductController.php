@@ -2,7 +2,7 @@
 
 class ProductController
 {
-    public function __construct(private $Gateway)
+    public function __construct(private ProductGateway $Gateway)
     {
         
     }
@@ -33,8 +33,7 @@ class ProductController
 
                 break;
             default:
-                http_response_code(501);
-                echo json_encode([]);
+                
                 break;
         }
     }
@@ -44,9 +43,7 @@ class ProductController
         switch ($method)
         {
             case "GET":
-                echo json_encode([
-                    "id" => 123
-                ]);
+                echo json_encode($this->Gateway->getAll());
                 break;
             default:
 
