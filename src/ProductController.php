@@ -45,9 +45,43 @@ class ProductController
             case "GET":
                 echo json_encode($this->Gateway->getAll());
                 break;
+            case "POST":
+                $data = (array) json_decode(file_get_contents("php://input"), true);
+                $errors = $this->getValidationErrors($data);
+                if(!empty($errors)) {
+                    http_response_code(422);
+                    echo json_encode(["errors" => $errors]);
+                    return;
+                }
+                if(!array_key_exists('is_available', $data)) {
+                    $data['is_available'] = false;
+                }
+                $id = $this->Gateway->create($data);
+                http_response_code(201);
+                echo json_encode([
+                    "message" => "Product Created",
+                    "id" => $id
+                ]);
+                break;
             default:
 
                 break;
         }
+    }
+
+    private function getValidationErrors(array $data) : array
+    {
+        $errors = [];
+        if(empty($data['name'])) {
+            $errors[] = "name is required";
+        }
+
+        if(array_key_exists("size", $data)) {
+            if(filter_var($data['size'], FILTER_VALIDATE_INT) === false) {
+                $errors = 'size must be integer';
+            }
+        }
+
+        return $errors;
     }
 }

@@ -15,8 +15,20 @@ class ProductGateway
         $data = [];
         while($row = $stat->fetch(PDO::FETCH_ASSOC))
         {
+            $row['is_available'] = (bool)$row['is_available']; 
             $data[] = $row;
         }
         return $data;
+    }
+
+    public function create(array $data):string
+    {
+        $sql = "INSERT INTO product (name, size, is_available) VALUES (:name, :size, :is_available)";
+        $stat = self::$connection->prepare($sql);
+        $stat->bindValue(":name", $data['name'], PDO::PARAM_STR);
+        $stat->bindValue(":size", $data['size'] ?? 0, PDO::PARAM_INT);
+        $stat->bindValue(":is_available", (bool)$data['is_available'] ?? false, PDO::PARAM_BOOL);
+        $stat->execute();
+        return self::$connection->lastInsertId();
     }
 }

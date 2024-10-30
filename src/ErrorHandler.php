@@ -12,4 +12,13 @@ class ErrorHandler
             "file" => $exception->getFile()
         ]);
     }
+    
+    public static function handleError($errno, $errstr)
+    {
+        http_response_code(500);
+        echo json_encode([
+            "code" => $errno,
+            "message" => $errstr
+        ]);
+    }
 }
