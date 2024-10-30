@@ -37,10 +37,26 @@ class ProductController
                 echo json_encode($product);
                 break;
             case "PATCH":
-                
+                $data = (array) json_decode(file_get_contents("php://input"), true);
+                $errors = $this->getValidationErrors($data, false);
+                if(!empty($errors)) {
+                    http_response_code(422);
+                    echo json_encode(["errors" => $errors]);
+                    return;
+                }
+                if(!array_key_exists('is_available', $data)) {
+                    $data['is_available'] = false;
+                }
+
+                $rows = $this->Gateway->update($product, $data);
+
+                echo json_encode([
+                    "message" => "Product $id Updated",
+                    "rows" => $rows
+                ]);
                 break;
             case "DELETE":
-
+                
                 break;
             default:
                 
@@ -80,10 +96,10 @@ class ProductController
         }
     }
 
-    private function getValidationErrors(array $data) : array
+    private function getValidationErrors(array $data, bool $is_new = true) : array
     {
         $errors = [];
-        if(empty($data['name'])) {
+        if($is_new && empty($data['name'])) {
             $errors[] = "name is required";
         }
 

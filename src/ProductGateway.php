@@ -45,5 +45,16 @@ class ProductGateway
         return $data;
     }
 
+    public function update(array $current, array $new) : int
+    {
+        $sql = "UPDATE product SET name = :name, size = :size, is_available = :is_available WHERE id = :id";
+        $stat = self::$connection->prepare($sql);
+        $stat->bindValue(":name", $new['name'] ?? $current['name'], PDO::PARAM_STR);
+        $stat->bindValue(":size", $new['size'] ?? $current['size'], PDO::PARAM_INT);
+        $stat->bindValue(":is_available", $new['is_available'] ?? $current['is_available'], PDO::PARAM_BOOL);
+        $stat->bindValue(":id", $current['id'], PDO::PARAM_INT);
+        $stat->execute();
+        return $stat->rowCount();
+    }
     
 }
