@@ -56,10 +56,15 @@ class ProductController
                 ]);
                 break;
             case "DELETE":
-                
+                $rows = $this->Gateway->delete($id);
+                echo json_encode([
+                    "message" => "Product $id Deleted",
+                    "rows" => $rows
+                ]);
                 break;
             default:
-                
+                http_response_code(405);
+                header("Allow: GET, PATCH, DELETE");
                 break;
         }
     }

@@ -56,5 +56,13 @@ class ProductGateway
         $stat->execute();
         return $stat->rowCount();
     }
-    
+
+    public function delete(string $id)
+    {
+        $sql = "DELETE FROM product WHERE id = :id";
+        $stat = self::$connection->prepare($sql);
+        $stat->bindValue(":id", $id, PDO::PARAM_INT);
+        $stat->execute();
+        return $stat->rowCount();
+    }
 }
